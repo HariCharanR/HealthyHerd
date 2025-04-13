@@ -27,8 +27,7 @@ class Home extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const SizedBox(height: 16),
-                    _buildTitle(),
+                    
                     const SizedBox(height: 24),
                     _buildImageContainer(),
                     _buildActionButtons(),
@@ -45,17 +44,17 @@ class Home extends StatelessWidget {
     );
   }
 
-  Widget _buildTitle() {
-    return const Center(
-      child: Text(
-        'AI-Powered Disease Detector',
-        style: TextStyle(
-          fontWeight: FontWeight.w600,
-          fontSize: 18,
-        ),
-      ),
-    );
-  }
+  // Widget _buildTitle() {
+  //   return const Center(
+  //     child: Text(
+  //       'AI-Powered Disease Detector',
+  //       style: TextStyle(
+  //         fontWeight: FontWeight.w600,
+  //         fontSize: 18,
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Widget _buildImageContainer() {
     return Container(
