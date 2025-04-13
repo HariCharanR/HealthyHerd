@@ -125,7 +125,7 @@ class Home extends StatelessWidget {
             },
           ),
         ),
-        const SizedBox(width: 16),
+        const SizedBox(width: 5),
         Expanded(
           child: ActionButtons(
             buttonText: 'Take Image',
