@@ -187,6 +187,7 @@ class ResultSummary extends StatelessWidget {
   }
 
   void _showSuggestionsModal(BuildContext context) {
+    // get the suggestions from the model itself
     final List<String> recommendations = [
       'Isolate the affected animal immediately',
       'Contact local veterinary services',

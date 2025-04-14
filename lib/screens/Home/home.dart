@@ -30,6 +30,7 @@ class Home extends StatelessWidget {
                     
                     const SizedBox(height: 24),
                     _buildImageContainer(),
+                    const SizedBox(height: 18),
                     _buildActionButtons(),
                     _buildAnalyzeButton(),
                     const ResultSummary(),
