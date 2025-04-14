@@ -1,9 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:healthyherd/widgets/Home/action_buttons.dart';
 import 'package:healthyherd/widgets/Home/result_summary.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
   const Home({super.key});
+
+  @override
+  State<Home> createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+  File? _selectedImage;
+  final ImagePicker _picker = ImagePicker();
+
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +38,6 @@ class Home extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    
                     const SizedBox(height: 24),
                     _buildImageContainer(),
                     const SizedBox(height: 18),
@@ -46,17 +56,6 @@ class Home extends StatelessWidget {
   }
 
   // Widget _buildTitle() {
-  //   return const Center(
-  //     child: Text(
-  //       'AI-Powered Disease Detector',
-  //       style: TextStyle(
-  //         fontWeight: FontWeight.w600,
-  //         fontSize: 18,
-  //       ),
-  //     ),
-  //   );
-  // }
-
   Widget _buildImageContainer() {
     return Container(
       width: double.infinity,
@@ -83,29 +82,40 @@ class Home extends StatelessWidget {
               color: Colors.grey.shade200,
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Center(
-              child: Image.asset(
-                'assets/placeholder_image.png',
-                fit: BoxFit.contain,
-                errorBuilder: (context, error, stackTrace) {
-                  return Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.image_not_supported,
-                        size: 48,
-                        color: Colors.grey,
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'No Image Uploaded',
-                        style: TextStyle(color: Colors.grey.shade700),
-                      ),
-                    ],
-                  );
-                },
-              ),
-            ),
+            child: _selectedImage != null
+                ? ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.file(
+                      _selectedImage!,
+                      fit: BoxFit.contain,
+                      width: double.infinity,
+                      height: double.infinity,
+                      errorBuilder: (context, error, stackTrace) {
+                        return _buildPlaceholder();
+                      },
+                    ),
+                  )
+                : _buildPlaceholder(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPlaceholder() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.image_not_supported,
+            size: 48,
+            color: Colors.grey,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'No Image Uploaded',
+            style: TextStyle(color: Colors.grey.shade700),
           ),
         ],
       ),
@@ -120,9 +130,7 @@ class Home extends StatelessWidget {
           child: ActionButtons(
             buttonText: 'Load Image',
             icon: Icons.photo_library,
-            onPressed: () {
-              // This will be connected to backend logic later
-            },
+            onPressed: () => _pickImage(ImageSource.gallery),
           ),
         ),
         const SizedBox(width: 5),
@@ -130,13 +138,36 @@ class Home extends StatelessWidget {
           child: ActionButtons(
             buttonText: 'Take Image',
             icon: Icons.camera_alt,
-            onPressed: () {
-              // This will be connected to backend logic later
-            },
+            onPressed: () => _pickImage(ImageSource.camera),
           ),
         ),
       ],
     );
+  }
+
+  Future<void> _pickImage(ImageSource source) async {
+    try {
+      final XFile? image = await _picker.pickImage(
+        source: source,
+        maxWidth: 1200,
+        maxHeight: 1200,
+        imageQuality: 90,
+      );
+      if (image != null && mounted) {
+        setState(() {
+          _selectedImage = File(image.path);
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   Widget _buildAnalyzeButton() {
